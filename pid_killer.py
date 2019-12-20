@@ -14,7 +14,7 @@ def main(args):
         pid = killer.Pstree.read_pid(pidfile)
         
         try:
-            memory_used = killer.Pstree.memory_used_by_process(pid)
+            memory_used = killer.Pstree.memory_used_by_process(pidfile)
             
             if memory_used > limit:
                 process = killer.Pstree()

@@ -118,24 +118,29 @@ class Pstree(object):
     def read_pid(pidfile):
         """Static Method that reads a pidfile and gets the associated pid from it
         """
+        pid = -1
         try:
-            with open(pidfile, mode='r') as f:
+            with open(pidfile,'r+') as f:
                 pid = f.readlines()[0]
-            
+            del(f)
             return int(pid)
-        except FileNotFoundError:
-            raise ProcessLookupError("Process does not exist")
+        except Exception as e:
+            print(str(e))
+            pass
 
     
     @staticmethod
     def memory_used_by_process(pidfile):
         """Static method which calculates the total memory usage of a process by reading the maps file
         """
+        print(pidfile)
         memory = {}
         try:
             pid = Pstree.read_pid(pidfile)
+            print(pid, "pid", type(pid))
             pid_dir = os.path.join('/','proc', str(pid))
             map_file_pid = os.path.join(pid_dir, 'maps')
+            print(pid_dir, map_file_pid)
             with open(map_file_pid, mode='r') as mmap:
                 memory_map = mmap.readlines()
             for mem in memory_map:
