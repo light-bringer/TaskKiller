@@ -16,7 +16,7 @@ class Utils(object):
     def getlogin(default_username="None"):
         try:
             login = os.getlogin()
-        except OSError as e:
+        except OSError:
             login = default_username
         return login
     
@@ -27,8 +27,7 @@ class Utils(object):
         Prints debugging information if post-review was run with --debug
         '''
         #if DEBUG or options and options.debug:
-        if config.DEBUG:
-            print(">>> %s" % s)
+        print(">>> %s" % s)
 
 
     @staticmethod
@@ -85,16 +84,17 @@ class Utils(object):
             pid = Utils.read_pid(pidfile)
             pid_dir = os.path.join('/','proc', str(pid))
             map_file_pid = os.path.join(pid_dir, 'maps')
-            #print(pid, pid_dir, map_file_pid)
             with open(map_file_pid, mode='r') as mmap:
                 memory_map = mmap.readlines()
             for mem in memory_map:
+                # this is in bytes
                 memory[mem.split()[0]] = int(mem.split()[4])
             
             return sum(memory.values())/1024
 
-        except ProcessLookupError:
+        except Exception:
             print("sorry")
+            raise OSError("Memory utilisation computation failed")
 
 
             
