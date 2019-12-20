@@ -1,6 +1,7 @@
 
 import argparse
 import logging
+logging.basicConfig()
 
 import killer
 from killer import NotCrossedLimitError
