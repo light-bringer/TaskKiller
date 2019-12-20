@@ -9,6 +9,8 @@ import subprocess # A fancy and flexible os.system()
 
 
 glog = logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 class ExecutionError(Exception): pass
 class NotCrossedLimitError(Exception):

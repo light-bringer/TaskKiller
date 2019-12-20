@@ -2,6 +2,8 @@
 import argparse
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
+
 import killer
 from killer import NotCrossedLimitError
 
