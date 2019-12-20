@@ -146,9 +146,10 @@ class Pstree(object):
             for mem in memory_map:
                 # this is in bytes
                 memory[mem.split()[0]] = int(mem.split()[4])
-            glog.debug("Current memory utilisation: {0}".format(memory))
-            glog.debug("Current memory utilisation: {0} KB".format(memory/1024))
-            return sum(memory.values())/1024
+            total_mem = sum(memory.values())
+            glog.debug("Current memory utilisation: {0}".format(total_mem))
+            glog.debug("Current memory utilisation: {0} KB".format(total_mem/1024))
+            return total_mem/1024
 
         except Exception:
             print("sorry")
