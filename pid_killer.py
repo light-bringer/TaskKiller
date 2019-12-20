@@ -10,15 +10,30 @@ def main(args):
     limit = args.threshold
 
     try:
+        
         pid = killer.Pstree.read_pid(pidfile)
-        memory_used = killer.Pstree.memory_used_by_process(pid)
-        if memory_used > limit:
-            process = killer.Pstree()
-            process.exterminator(process)
-        else:
-            raise NotCrossedLimitError(pid, limit)
+        
+        try:
+            memory_used = killer.Pstree.memory_used_by_process(pid)
+            
+            if memory_used > limit:
+                process = killer.Pstree()
+                process.exterminator(process)
+            else:
+                raise NotCrossedLimitError(pid, limit)
+        
+        except OSError as e:
+            logging.error(str(e))
+            logging.error("OS issue")
+
     except NotCrossedLimitError as e:
-        logging.error(e.msg)
+            logging.error(str(e))
+            logging.error("Limit has not been reached")
+    except Exception as e:
+        logging.error(str(e))
+        logging.error("some other exception has happened")
+    finally:
+        logging.debug("fin")
         
 
 if __name__ == '__main__':

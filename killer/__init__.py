@@ -3,11 +3,10 @@ import errno
 import time
 import datetime
 import os
-import utils
 import getpass
 import logging
 import subprocess # A fancy and flexible os.system()
-from . import utils
+
 
 glog = logging
 
@@ -113,8 +112,7 @@ class Pstree(object):
             for pid in the_pids:
                 self.exterminator(pid)
             self.exterminator(the_pid)
-            print(utils.Utils.execute("ls"))
-    
+            
     
     @staticmethod
     def read_pid(pidfile):
