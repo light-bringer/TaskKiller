@@ -36,7 +36,7 @@ class Pstree(object):
             # os.kill(pid, the_signal)
             cmd = "kill -{0} {1} 2>/dev/null".format(the_signal, pid)
             r = os.system(cmd) # this is tricky call, hence not playing with subprocess
-            glog.debug("cmd: {0} :: exit_code: {1}".format(cmd, r))
+            glog.info("cmd: {0} :: exit_code: {1}".format(cmd, r))
         except Exception as e:
             glog.exception(str(e))
             pass
@@ -45,7 +45,7 @@ class Pstree(object):
             try:
                 cmd = "sudo -n kill -{0} {1} 2>/dev/null".format(the_signal, pid)
                 r = os.system(cmd) # this is tricky call, hence not playing with subprocess
-                glog.debug("cmd: {0} :: exit_code: {1}".format(cmd, r))
+                glog.info("cmd: {0} :: exit_code: {1}".format(cmd, r))
             except Exception as e:
                 glog.exception(str(e))
                 pass
@@ -69,7 +69,7 @@ class Pstree(object):
     def send_stop_recursively(self, pid):
         """stops pid process and, recursively, all of its children, returning their pids in an array if any".
         """
-        glog.debug("Stopping: {0}".format(pid))
+        glog.info("Stopping: {0}".format(pid))
 
         self.really_kill(pid, signal.SIGSTOP)
 
@@ -87,7 +87,7 @@ class Pstree(object):
         cmd = "ps faux"
         out = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
-        glog.debug(out)
+        glog.info(out)
 
         if kill_signal == signal.SIGKILL:
             # first, we send SIGSTOP to everybody, so that nobody will start any new processes when we iteratively send SIGKILL.
@@ -96,18 +96,18 @@ class Pstree(object):
             the_pids = self.send_stop_recursively(the_pid)
 
             for pid in reversed(the_pids):
-                glog.debug("Killing (child): {0}".format(pid))
+                glog.info("Killing (child): {0}".format(pid))
                 self.really_kill(pid, signal.SIGKILL)
 
             self.really_kill(the_pid, signal.SIGKILL)
         else:
             the_pids = self.children(the_pid, recurse=True)
-            glog.debug("the_pids: {0}".format(the_pids))
+            glog.info("the_pids: {0}".format(the_pids))
             for pid in reversed(the_pids):
-                glog.debug("Killing({0}) (child): {1}".format(kill_signal, pid))
+                glog.info("Killing({0}) (child): {1}".format(kill_signal, pid))
                 self.really_kill(pid, kill_signal)
 
-            glog.debug("Killing({0}) (parent): {1}".format(kill_signal, the_pid))
+            glog.info("Killing({0}) (parent): {1}".format(kill_signal, the_pid))
             self.really_kill(the_pid, kill_signal)
             time.sleep(64)
 
@@ -149,8 +149,8 @@ class Pstree(object):
                 # this is in bytes
                 memory[mem.split()[0]] = int(mem.split()[4])
             total_mem = sum(memory.values())
-            glog.debug("Current memory utilisation: {0}".format(total_mem))
-            glog.debug("Current memory utilisation: {0} KB".format(total_mem/1024))
+            glog.info("Current memory utilisation: {0}".format(total_mem))
+            glog.info("Current memory utilisation: {0} KB".format(total_mem/1024))
             return total_mem/1024
 
         except Exception:
