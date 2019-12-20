@@ -21,7 +21,7 @@ def main(args):
             
             if memory_used > limit:
                 process = killer.Pstree()
-                process.exterminator(process)
+                process.exterminator(pid)
             else:
                 raise NotCrossedLimitError(pid, limit)
         
