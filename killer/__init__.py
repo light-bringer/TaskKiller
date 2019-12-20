@@ -150,8 +150,8 @@ class Pstree(object):
                 memory[mem.split()[0]] = int(mem.split()[4])
             total_mem = sum(memory.values())
             glog.info("Current memory utilisation: {0}".format(total_mem))
-            glog.info("Current memory utilisation: {0} KB".format(total_mem/1024))
-            return total_mem/1024
+            glog.info("Current memory utilisation: {0} MB".format(total_mem/1024*1024))
+            return total_mem/1024*1024
 
         except Exception:
             print("sorry")
