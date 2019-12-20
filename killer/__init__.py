@@ -14,7 +14,7 @@ class ExecutionError(Exception): pass
 class NotCrossedLimitError(Exception):
     def __init__(self, pid, limit, msg=None):
         if msg is None:
-            msg = "The {} has not crossed limit of : {1}".format(pid, limit)
+            msg = "The {0} has not crossed limit of : {1}".format(pid, limit)
         super(NotCrossedLimitError, self).__init__(msg)
 
 
@@ -32,18 +32,18 @@ class Pstree(object):
         
         try:
             # os.kill(pid, the_signal)
-            cmd = "kill -%d %s 2>/dev/null" % (the_signal, pid)
+            cmd = "kill -{0} {1} 2>/dev/null".format(the_signal, pid)
             r = os.system(cmd) # this is tricky call, hence not playing with subprocess
-            glog.debug("cmd: %s :: exit_code: %s" % (cmd, r))
+            glog.debug("cmd: {0} :: exit_code: {1}".format(cmd, r))
         except Exception as e:
             glog.exception(str(e))
             pass
 
         if os.getuid() != 0:
             try:
-                cmd = "sudo -n kill -%d %s 2>/dev/null" % (the_signal, pid)
+                cmd = "sudo -n kill -{0} {1} 2>/dev/null".format(the_signal, pid)
                 r = os.system(cmd) # this is tricky call, hence not playing with subprocess
-                glog.debug("cmd: %s :: exit_code: %s" % (cmd, r))
+                glog.debug("cmd: {0} :: exit_code: {1}".format(cmd, r))
             except Exception as e:
                 glog.exception(str(e))
                 pass
@@ -53,7 +53,7 @@ class Pstree(object):
         """returns an array of the children of the given process, or an empty array if no such process is known.
         """
         out = subprocess.Popen(
-            "pgrep -P %d" % pid, stdout=subprocess.PIPE, shell=True).communicate()[0]
+            "pgrep -P {0}".format(int(pid)), stdout=subprocess.PIPE, shell=True).communicate()[0]
 
         pids = [int(line) for line in out.splitlines()]
 
@@ -67,7 +67,7 @@ class Pstree(object):
     def send_stop_recursively(self, pid):
         """stops pid process and, recursively, all of its children, returning their pids in an array if any".
         """
-        glog.debug("Stopping: %d" % pid)
+        glog.debug("Stopping: {0}".format(pid))
 
         self.really_kill(pid, signal.SIGSTOP)
 
@@ -94,18 +94,18 @@ class Pstree(object):
             the_pids = self.send_stop_recursively(the_pid)
 
             for pid in reversed(the_pids):
-                glog.debug("Killing (child): %d" % pid)
+                glog.debug("Killing (child): {0}".format(pid))
                 self.really_kill(pid, signal.SIGKILL)
 
             self.really_kill(the_pid, signal.SIGKILL)
         else:
             the_pids = self.children(the_pid, recurse=True)
-            glog.debug("the_pids: %s" % the_pids)
+            glog.debug("the_pids: {0}".format(the_pids))
             for pid in reversed(the_pids):
-                glog.debug("Killing(%s) (child): %d" % (kill_signal, pid))
+                glog.debug("Killing({0}) (child): {1}".format(kill_signal, pid))
                 self.really_kill(pid, kill_signal)
 
-            glog.debug("Killing(%s) (parent): %d" % (kill_signal, the_pid))
+            glog.debug("Killing({0}) (parent): {1}".format(kill_signal, the_pid))
             self.really_kill(the_pid, kill_signal)
             time.sleep(64)
 
